@@ -14,6 +14,8 @@ const useref = require('gulp-useref');
 const filter = require('gulp-filter');
 const gulpif = require('gulp-if');
 
+const hash_src = require('gulp-hash-src');
+
 gulp.task('styles', () => {
   return gulp.src('app/styles/*.scss')
     .pipe($.plumber())
@@ -88,12 +90,17 @@ gulp.task('html', ['styles', 'scripts'], () => {
     .pipe($.if('*.html', $.htmlmin({
       collapseWhitespace: true
     })))
+    .pipe(hash_src({
+      build_dir: './app',
+      src_path: './dist/'
+    }))
     .pipe(revFilter)
     .pipe(rev())
     .pipe(revFilter.restore)
     .pipe(revReplace())
     .pipe(gulp.dest('dist'));
 });
+
 
 gulp.task('images', () => {
   return gulp.src('app/images/**/*')
